@@ -1,5 +1,5 @@
-import CliMaker, { ICommand } from '.';
-
+import CliMaker, { ICommand } from './index';
+console.log(CliMaker)
 const command2: ICommand = {
   name: 'send',
   action: toolMethod,

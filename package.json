@@ -1,17 +1,26 @@
 {
-  "name": "cli-maker",
-  "version": "0.1.0",
-  "description": "",
-  "main": "index.js",
+  "name": "@z3ro/clim",
+  "version": "0.1.1",
+  "description": "Simple CLI maker",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Z3ROO/clim.git"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc"
   },
   "keywords": [],
-  "author": "",
+  "author": "zero",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^18.7.16",
-    "tsc": "^2.0.4"
+    "tsc": "^2.0.4",
+    "typescript": "^4.8.3"
   },
   "dependencies": {
     "chalk": "^4.1.2"

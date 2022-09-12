@@ -8,5 +8,5 @@
     "noImplicitAny": true,
     "declaration": true
   },
-  "exclude": ["./testTool.ts"]
+  "exclude": ["./testTool.ts","./dist"]
 }

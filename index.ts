@@ -171,3 +171,5 @@ export default class CliMaker {
     return 0;
   }
 }
+
+module.exports = CliMaker
