@@ -20,22 +20,29 @@ class ParseParameters {
     ];
 
     for (let i = 0; i < this.rawParameters.length; i++) {
-      if (this.isValidAlias(i))
-        i += this.parseAlias(i);
-      else if (this.isValidFlag(i)) 
-        i += this.parseFlag(i);
-      else if (!this.params['stdin'])
-        this.params['stdin'] = this.rawParameters[i];
-      else
-        throw new Error(`Unexpected Error on parameter "${this.rawParameters[i]}". Might not be a valid option.`);
+      const parameter = this.rawParameters[i];
+      const nextParemeter = this.rawParameters[i+1];
+
+      if (this.isValidAlias(parameter)) {
+        i += this.parseAlias(parameter, nextParemeter);
+      }
+      else if (this.isValidFlag(parameter)) {
+        i += this.parseFlag(parameter, nextParemeter);
+      }
+      else if (!this.params['stdin']) {
+        this.params['stdin'] = parameter;
+      }
+      else {
+        throw new Error(`Unexpected Error on parameter "${parameter}". Might not be a valid option.`);
+      }
     }
   }
 
-  isValidAlias = (i:number) => this.rawParameters[i].match(/^-[^-]+$/);
+  isValidAlias = (parameter: string) => parameter.match(/^-[^-]+$/);
 
-  parseAlias(paramIndex:number): number {
+  parseAlias(parameter: string, nextParemeter: string): number {
     const flags = this.command.flags;
-    let params: string[] = [this.rawParameters[paramIndex].substring(1)]
+    let params: string[] = [parameter.substring(1)]
 
     if (params[0].length > 1)
       params = [...params[0].split('')];
@@ -53,10 +60,10 @@ class ParseParameters {
       if (flag.type === 'string') {
         if (paramWithValue)
           throw new Error(`On option "-${param}"; Grouped options allow only one parameter that expects value.`);
-        if (this.rawParameters[paramIndex+1] == null)
+        if (nextParemeter == null)
           throw new Error(`On option "-${param}"; The option "--${flag.command}" requires a value but got null or undefined`);
 
-        this.params[flag.command] = this.rawParameters[paramIndex+1];
+        this.params[flag.command] = nextParemeter;
         paramWithValue = true;
       }
       else
@@ -69,10 +76,10 @@ class ParseParameters {
       return 0;
   }
 
-  isValidFlag = (i:number) => this.rawParameters[i].match(/^--[^-]+.*/);
+  isValidFlag = (parameter: string) => parameter.match(/^--[^-]+.*/);
 
-  parseFlag(paramIndex: number): number {
-    const param = this.rawParameters[paramIndex].substring(2);
+  parseFlag(parameter: string, nextParemeter: string): number {
+    const param = parameter.substring(2);
     const flag = this.command.flags.find(flag => param === flag.command);
 
     if (flag == null)
@@ -82,10 +89,10 @@ class ParseParameters {
       throw new Error(`Option "--${flag.command}" is being set twice by param: "--${param}".`);
     
     if (flag.type === 'string') {
-      if (this.rawParameters[paramIndex+1] == null)
+      if (nextParemeter == null)
         throw new Error(`On parameter "--${param}"; The option "--${flag.command}" requires a value but got null or undefined`);
 
-      this.params[flag.command] = this.rawParameters[paramIndex+1];
+      this.params[flag.command] = nextParemeter;
       return 1;
     }
     else
