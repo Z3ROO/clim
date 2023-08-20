@@ -3,11 +3,12 @@ import chalk from 'chalk';
 import { F, ICommand, IConfig, Params } from './types';
 import ParseParameters from './ParseParameters';
 
+export * from './types';
+
 export default class CliMaker {
   params: Params = {};
   command: ICommand;
   rawParameters = process.argv.slice(2);
-
 
   constructor(command: ICommand, config?: IConfig) {
     this.command = command;
@@ -23,13 +24,9 @@ export default class CliMaker {
     //Binds command function with class constructor by default
     if (config?.bindThis !== false)
       command.action.bind(this)(this.params);
-
-    console.log('raw: ', this.rawParameters)
-    console.log('parsed: ', this.params)
-
   }
 
-  liftSubCommands(): void {
+  private liftSubCommands(): void {
     const subCommands = this.command.subCommands;
 
     for (let i = 0; i < subCommands.length; i++) {
@@ -41,7 +38,7 @@ export default class CliMaker {
     }
   }
 
-  parseParameters(): void {
+  private parseParameters(): void {
     let parsedParameters: ParseParameters;
 
     try {
@@ -54,11 +51,11 @@ export default class CliMaker {
     this.params = parsedParameters.params;
   }
 
-  log = <F>function (text:string) {
+  public log = <F>function (text:string) {
     console.log(chalk.bold.cyan(text));
   }
 
-  setCustomLogs() {
+  private setCustomLogs() {
     this.log.info = (text) => console.log(chalk.bold.blue('\u{1f6c8} '+text));
     this.log.success = (text) => console.log(chalk.bold.green('\u2713 '+text));
     this.log.err = (text) => {
@@ -67,7 +64,7 @@ export default class CliMaker {
     };
   }
 
-  help() {
+  private help() {
     this.log('\n' + chalk.inverse(this.command.title || this.command.name) + '\n');
     
     if (this.command.description)
