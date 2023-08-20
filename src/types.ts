@@ -19,7 +19,7 @@ export interface Params {
   [key: string]: string|boolean
 };
 
-export interface F {
+export interface LogFunction {
   (text:string): void
   info: (text:string) => void
   err: (text:string) => void

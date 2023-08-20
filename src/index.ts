@@ -1,6 +1,6 @@
 import process from 'process';
 import chalk from 'chalk';
-import { F, ICommand, IConfig, Params } from './types';
+import { LogFunction, ICommand, IConfig, Params } from './types';
 import ParseParameters from './ParseParameters';
 
 export * from './types';
@@ -51,7 +51,7 @@ export default class CliMaker {
     this.params = parsedParameters.params;
   }
 
-  public log = <F>function (text:string) {
+  public log = <LogFunction>function (text:string) {
     console.log(chalk.bold.cyan(text));
   }
 
@@ -59,7 +59,7 @@ export default class CliMaker {
     this.log.info = (text) => console.log(chalk.bold.blue('\u{1f6c8} '+text));
     this.log.success = (text) => console.log(chalk.bold.green('\u2713 '+text));
     this.log.err = (text) => {
-      console.log(chalk.bold.red('\u00d7 '+text))
+      console.log(chalk.bold.red('\u00d7 '+text));
       process.exit(1);
     };
   }
@@ -76,7 +76,7 @@ export default class CliMaker {
     this.log('Options:')
     this.command.flags.forEach(flag => {
       if (flag.type === 'stdin')
-        return
+        return;
 
       const help = flag.help ? flag.help : `${chalk.bold.blueBright('--'+flag.command)} or ${chalk.bold.blueBright('-'+flag.alias)}`;
       const description = flag.description;
@@ -88,4 +88,4 @@ export default class CliMaker {
   }
 }
 
-module.exports = CliMaker
+module.exports = CliMaker;
