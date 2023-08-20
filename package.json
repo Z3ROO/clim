@@ -1,6 +1,6 @@
 {
   "name": "@z3ro/clim",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "Simple CLI maker",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
   "author": "zero",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^18.7.16",
+    "@types/node": "^20.5.1",
     "tsc": "^2.0.4",
     "typescript": "^4.8.3"
   },

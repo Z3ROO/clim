@@ -8,5 +8,6 @@
     "noImplicitAny": true,
     "declaration": true
   },
+  "include": ["src"],
   "exclude": ["./testTool.ts","./dist"]
 }
