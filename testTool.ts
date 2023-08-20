@@ -1,10 +1,11 @@
-import CliMaker, { ICommand } from './index';
-console.log(CliMaker)
+import CliMaker from './src/index';
+import { ICommand } from './src/types';
+
 const command2: ICommand = {
   name: 'send',
   action: toolMethod,
   description: '',
-  help: '',
+  help: 'Messagem de help',
   flags:[
     {
       type: 'stdin',
@@ -29,7 +30,7 @@ const command2: ICommand = {
     {
       command: 'teste3',
       alias: 'a',
-      type: 'boolean',
+      type: 'string',
     }
   ],
   subCommands: []
@@ -79,8 +80,9 @@ function toolMethod(options: any) {
     stdin,
     config
   } = options;
-
-  if (stdin == null)
+  console.log(options);
+  console.log(this);
+  if (stdin == null) 
     this.log.err("Destination directory must be specified!");
 }
 
