@@ -90,4 +90,3 @@ export default class CliMaker {
   }
 }
 
-module.exports = CliMaker;
