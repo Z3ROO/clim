@@ -1,7 +1,7 @@
 import process from 'process';
 import chalk from 'chalk';
 import { LogFunction, ICommand, IConfig, Params } from './types';
-import ParseParameters from './ParseParameters';
+import ArgvParser from './parser/ArgvParser';
 
 export * from './types';
 
@@ -41,10 +41,10 @@ export default class CliMaker {
   }
 
   private parseParameters(): void {
-    let parsedParameters: ParseParameters;
+    let parsedParameters: ArgvParser;
 
     try {
-      parsedParameters = new ParseParameters(this.command, this.rawParameters);
+      parsedParameters = new ArgvParser(this.command, this.rawParameters);
     }
     catch(err) {
       this.log.err(err);
