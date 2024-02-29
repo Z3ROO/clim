@@ -1,35 +1,34 @@
 import CliMaker, { ICommand } from './dist/index.js';
 
-
 const command2: ICommand = {
   name: 'send',
   action: toolMethod,
   description: '',
   help: 'Messagem de help',
-  flags:[
+  options:[
     {
       type: 'stdin',
     },
     {
-      command: 'config',
-      alias: 'c',
+      flag: 'config',
+      shortFlag: 'c',
       type: 'string',
       description: 'Configure the base directory to bring data of. When using bring ./path is the same as bring /path/passed/to/config/ + ./path',
       help:'-c or --config <path>'
     },
     {
-      command: 'teste1',
-      alias: 't',
+      flag: 'teste1',
+      shortFlag: 't',
       type: 'boolean',
     },
     {
-      command: 'teste2',
-      alias: 's',
+      flag: 'teste2',
+      shortFlag: 's',
       type: 'boolean',
     },
     {
-      command: 'teste3',
-      alias: 'a',
+      flag: 'teste3',
+      shortFlag: 'a',
       type: 'string',
     }
   ],
@@ -42,32 +41,32 @@ const command: ICommand = {
   action: toolMethod,  
   description: 'The command description',
   help: 'Ex: bring [path/to/bring/from]',
-  flags:[
+  options:[
     {
       type: 'stdin',
       description: ''
     },
     {
-      command: 'config',
-      alias: 'c',
+      flag: 'config',
+      shortFlag: 'c',
       type: 'string',
       description: 'Configure the base directory to bring data of. When using bring ./path is the same as bring /path/passed/to/config/ + ./path',
     },
     {
-      command: 'recursive',
-      alias: 'r',
+      flag: 'recursive',
+      shortFlag: 'r',
       type: 'boolean',
       description: 'If this flag is present the behavior will be altered in a certain way.'
     },
     {
-      command: 'thing',
-      alias: 't',
+      flag: 'thing',
+      shortFlag: 't',
       type: 'boolean',
       description: 'If this flag is present the behavior will be altered in a certain way.'
     },
     {
-      command: 'other',
-      alias: 'o',
+      flag: 'other',
+      shortFlag: 'o',
       type: 'boolean',
       description: 'If this flag is present the behavior will be altered in a certain way.'
     }
