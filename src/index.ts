@@ -1,7 +1,23 @@
 import process from 'process';
 import chalk from 'chalk';
 import { LogFunction, ICommand, IConfig, Params } from './types';
-import ParseParameters from './ParseParameters';
+import ArgvParser from './parser/ArgvParser';
+
+// process.stdin.setEncoding('utf8');
+
+// let inputData = '';
+
+// process.stdin.on('readable', () => {
+//   const chunk = process.stdin.read();
+//   if (chunk !== null) {
+//     inputData += chunk;
+//   }
+// });
+
+// process.stdin.on('end', () => {
+//   // Do something with the input data
+//   console.log('Received data:', inputData);
+// });
 
 export * from './types';
 
@@ -13,11 +29,15 @@ export default class CliMaker {
   constructor(command: ICommand, config?: IConfig) {
     this.command = command;
 
-    this.setCustomLogs();
+    //Make a subcommand into a command
     this.liftSubCommands();
-    this.parseParameters();
-    
-    //If help command is included prints an overall instructions of the command and exit with code 0;
+
+    this.setCustomLogs();
+    this.setDefaultOptions();
+
+    this.params = this.parseParameters();
+
+    //If help command is present, it prints an overall instructions of the command and exit with code 0;
     if (this.params.help)
       this.help();
 
@@ -40,21 +60,33 @@ export default class CliMaker {
     }
   }
 
-  private parseParameters(): void {
-    let parsedParameters: ParseParameters;
+  private parseParameters(): Params {
+    let parsedParameters: ArgvParser;
 
     try {
-      parsedParameters = new ParseParameters(this.command, this.rawParameters);
+      parsedParameters = new ArgvParser(this.command, this.rawParameters);
     }
     catch(err) {
       this.log.err(err);
     }
 
-    this.params = parsedParameters.params;
+    return parsedParameters.params;
   }
 
   public log = <LogFunction>function (text:string) {
     console.log(chalk.bold.cyan(text));
+  }
+
+  private setDefaultOptions() {
+    this.command.options = [
+      {
+        flag: 'help',
+        shortFlag: 'h',
+        type: 'boolean',
+        description: 'If provided outputs de help content of current command.'
+      },
+      ...this.command.options
+    ];
   }
 
   private setCustomLogs() {
@@ -76,14 +108,14 @@ export default class CliMaker {
       this.log(this.command.help+'\n');
     
     this.log('Options:')
-    this.command.flags.forEach(flag => {
-      if (flag.type === 'stdin')
-        return;
+    this.command.options.forEach(option => {
+      // if (option.type === 'stdin')
+      //   return;
 
-      const help = flag.help ? flag.help : `${chalk.bold.blueBright('--'+flag.command)} or ${chalk.bold.blueBright('-'+flag.alias)}`;
-      const description = flag.description;
+      const help = option.help ? option.help : `${chalk.bold.blueBright('--'+option.flag)} or ${chalk.bold.blueBright('-'+option.shortFlag)}`;
+      const description = option.description;
 
-      this.log(`${help} ${description && '| '+description} \n`);
+      this.log(`${help} ${description && '| ' + description} \n`);
     })
 
     process.exit(0);
