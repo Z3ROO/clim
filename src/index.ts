@@ -76,12 +76,12 @@ export default class CliMaker {
       this.log(this.command.help+'\n');
     
     this.log('Options:')
-    this.command.flags.forEach(flag => {
-      if (flag.type === 'stdin')
+    this.command.options.forEach(option => {
+      if (option.type === 'stdin')
         return;
 
-      const help = flag.help ? flag.help : `${chalk.bold.blueBright('--'+flag.command)} or ${chalk.bold.blueBright('-'+flag.alias)}`;
-      const description = flag.description;
+      const help = option.help ? option.help : `${chalk.bold.blueBright('--'+option.flag)} or ${chalk.bold.blueBright('-'+option.shortFlag)}`;
+      const description = option.description;
 
       this.log(`${help} ${description && '| '+description} \n`);
     })

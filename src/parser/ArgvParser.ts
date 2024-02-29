@@ -9,22 +9,22 @@ class ArgvParser {
     this.command = command;
     this.rawParameters = rawParameters;
 
-    this.command.flags = [
+    this.command.options = [
       {
-        command: 'help',
-        alias: 'h',
+        flag: 'help',
+        shortFlag: 'h',
         type: 'boolean',
         description: 'If provided outputs de help content of current command.'
       },
-      ...this.command.flags
+      ...this.command.options
     ];
 
     for (let i = 0; i < this.rawParameters.length; i++) {
       const parameter = this.rawParameters[i];
       const nextParemeter = this.rawParameters[i+1];
 
-      if (this.isValidAlias(parameter)) {
-        const {parsedParams, flagArgumentQuantity} = this.parseAlias(parameter, nextParemeter);
+      if (this.isValidShortFlag(parameter)) {
+        const {parsedParams, flagArgumentQuantity} = this.parseShortFlag(parameter, nextParemeter);
         Object.assign(this.params, parsedParams)
         i += flagArgumentQuantity;
       }
@@ -42,9 +42,9 @@ class ArgvParser {
     }
   }
 
-  isValidAlias = (parameter: string) => parameter.match(/^-[^-]+$/);
+  isValidShortFlag = (parameter: string) => parameter.match(/^-[^-]+$/);
 
-  parseAlias(parameter: string, nextParemeter: string): ParseResult {
+  parseShortFlag(parameter: string, nextParemeter: string): ParseResult {
     const parsedParams: ParsedParams = {}
     //Remove dash character
     parameter = parameter.substring(1);
@@ -56,20 +56,20 @@ class ArgvParser {
     let paramWithValue = false;
 
     params.forEach(param => {
-      const flag = this.findFlag(param);
+      const option = this.findOption(param);
 
       //If expect argument
-      if (flag.type === 'string') {
+      if (option.type === 'string') {
         if (paramWithValue)
           throw new Error(`On option "-${param}"; Grouped options allow only one parameter that expects value.`);
         if (nextParemeter == null)
-          throw new Error(`On option "-${param}"; The option "--${flag.command}" requires a value but got null or undefined`);
+          throw new Error(`On option "-${param}"; The option "--${option.flag}" requires a value but got null or undefined`);
 
-        parsedParams[flag.command] = nextParemeter;
+        parsedParams[option.flag] = nextParemeter;
         paramWithValue = true;
       }
       else //If boolean
-        parsedParams[flag.command] = true;
+        parsedParams[option.flag] = true;
     });
 
     return {
@@ -85,14 +85,14 @@ class ArgvParser {
     //Remove double dash
     parameter = parameter.substring(2);
 
-    const flag = this.findFlag(parameter);
+    const option = this.findOption(parameter);
     
     //Flag with argument
-    if (flag.type === 'string') {
+    if (option.type === 'string') {
       if (nextParemeter == null)
-        throw new Error(`On parameter "--${parameter}"; The option "--${flag.command}" requires a value but got null or undefined`);
+        throw new Error(`On parameter "--${parameter}"; The option "--${option.flag}" requires a value but got null or undefined`);
 
-      parsedParams[flag.command] = nextParemeter;
+      parsedParams[option.flag] = nextParemeter;
       return {
         parsedParams,
         flagArgumentQuantity: 0
@@ -100,7 +100,7 @@ class ArgvParser {
 
     }
     else //Flag boolean
-      parsedParams[flag.command] = true;
+      parsedParams[option.flag] = true;
 
     return {
       parsedParams,
@@ -108,20 +108,20 @@ class ArgvParser {
     }
   }
 
-  findFlag(param: string): Option {
-    const flags = this.command.flags;
+  findOption(param: string): Option {
+    const options = this.command.options;
 
-    const flag = flags.find(flag => param === flag.alias);
+    const option = options.find(option => (param === option.flag || param === option.shortFlag));
 
-    //Flag not found
-    if (flag == null)
+    //option not found
+    if (option == null)
       throw new Error(`No option found for parameter "${param}".`);
 
     //Flag set twice
-    if (this.params[flag.command])
-      throw new Error(`Option "--${flag.command}" is being set twice on parameter "-${param}".`);
+    if (this.params[option.flag])
+      throw new Error(`Option "--${option.flag}" is being set twice on parameter "${param}".`);
 
-    return flag;
+    return option;
   }
 }
 

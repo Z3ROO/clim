@@ -5,13 +5,13 @@ export interface ICommand {
   action: (options:any) => void
   description: string
   help?: string
-  flags: Option[]
+  options: Option[]
   subCommands?: ICommand[]
 }
 
 export interface Option {
-  command?: string
-  alias?: string
+  flag?: string
+  shortFlag?: string
   type: 'stdin'|'string'|'boolean'
   description?: string
   help?: string
