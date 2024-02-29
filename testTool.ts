@@ -81,7 +81,7 @@ function toolMethod(options: any) {
     config
   } = options;
   console.log(options);
-  console.log(this);
+  // console.log(this);
   if (stdin == null) 
     this.log.err("Destination directory must be specified!");
 }
