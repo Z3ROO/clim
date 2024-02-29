@@ -5,10 +5,8 @@ const command2: ICommand = {
   action: toolMethod,
   description: '',
   help: 'Messagem de help',
+  arguments: [],
   options:[
-    {
-      type: 'stdin',
-    },
     {
       flag: 'config',
       shortFlag: 'c',
@@ -41,11 +39,21 @@ const command: ICommand = {
   action: toolMethod,  
   description: 'The command description',
   help: 'Ex: bring [path/to/bring/from]',
-  options:[
+  arguments: [
     {
-      type: 'stdin',
-      description: ''
+      name: 'directory',
+      type: 'argument',
+      description: 'description of directory for some shit',
+      help: 'directory for some shit'
     },
+    {
+      name: 'directory2',
+      type: 'argument',
+      description: 'description of directory for some shit',
+      help: 'directory for some shit'
+    }
+  ],
+  options:[
     {
       flag: 'config',
       shortFlag: 'c',
@@ -76,12 +84,12 @@ const command: ICommand = {
 
 function toolMethod(options: any) {
   const {
-    stdin,
+    directory,
     config
   } = options;
   console.log(options);
   // console.log(this);
-  if (stdin == null) 
+  if (directory == null) 
     this.log.err("Destination directory must be specified!");
 }
 
