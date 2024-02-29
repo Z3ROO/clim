@@ -1,5 +1,5 @@
-import CliMaker from './src/index';
-import { ICommand } from './src/types';
+import CliMaker, { ICommand } from './dist/index.js';
+
 
 const command2: ICommand = {
   name: 'send',
