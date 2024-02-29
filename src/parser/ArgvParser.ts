@@ -1,4 +1,4 @@
-import { ICommand, Option, Params } from "../types";
+import { ICommand, Option, Params, ParseResult, ParsedParams } from "../types";
 
 class ArgvParser {
   command: ICommand;
@@ -24,10 +24,14 @@ class ArgvParser {
       const nextParemeter = this.rawParameters[i+1];
 
       if (this.isValidAlias(parameter)) {
-        i += this.parseAlias(parameter, nextParemeter);
+        const {parsedParams, flagArgumentQuantity} = this.parseAlias(parameter, nextParemeter);
+        Object.assign(this.params, parsedParams)
+        i += flagArgumentQuantity;
       }
       else if (this.isValidFlag(parameter)) {
-        i += this.parseFlag(parameter, nextParemeter);
+        const {parsedParams, flagArgumentQuantity} = this.parseFlag(parameter, nextParemeter);
+        Object.assign(this.params, parsedParams)
+        i += flagArgumentQuantity;
       }
       else if (!this.params['stdin']) {
         this.params['stdin'] = parameter;
@@ -40,7 +44,8 @@ class ArgvParser {
 
   isValidAlias = (parameter: string) => parameter.match(/^-[^-]+$/);
 
-  parseAlias(parameter: string, nextParemeter: string): number {
+  parseAlias(parameter: string, nextParemeter: string): ParseResult {
+    const parsedParams: ParsedParams = {}
     //Remove dash character
     parameter = parameter.substring(1);
 
@@ -51,7 +56,6 @@ class ArgvParser {
     let paramWithValue = false;
 
     params.forEach(param => {
-      //Search for an existing flag
       const flag = this.findFlag(param);
 
       //If expect argument
@@ -61,26 +65,26 @@ class ArgvParser {
         if (nextParemeter == null)
           throw new Error(`On option "-${param}"; The option "--${flag.command}" requires a value but got null or undefined`);
 
-        this.params[flag.command] = nextParemeter;
+        parsedParams[flag.command] = nextParemeter;
         paramWithValue = true;
       }
       else //If boolean
-        this.params[flag.command] = true;
+        parsedParams[flag.command] = true;
     });
 
-    if (paramWithValue)
-      return 1;
-    else
-      return 0;
+    return {
+      parsedParams,
+      flagArgumentQuantity: paramWithValue ? 1 : 0
+    }
   }
 
   isValidFlag = (parameter: string) => parameter.match(/^--[^-]+.*/);
 
-  parseFlag(parameter: string, nextParemeter: string): number {
+  parseFlag(parameter: string, nextParemeter: string): ParseResult {
+    const parsedParams: ParsedParams = {}
     //Remove double dash
     parameter = parameter.substring(2);
 
-    //Search for existing flag
     const flag = this.findFlag(parameter);
     
     //Flag with argument
@@ -88,13 +92,20 @@ class ArgvParser {
       if (nextParemeter == null)
         throw new Error(`On parameter "--${parameter}"; The option "--${flag.command}" requires a value but got null or undefined`);
 
-      this.params[flag.command] = nextParemeter;
-      return 1;
+      parsedParams[flag.command] = nextParemeter;
+      return {
+        parsedParams,
+        flagArgumentQuantity: 0
+      }
+
     }
     else //Flag boolean
-      this.params[flag.command] = true;
-    
-    return 0;
+      parsedParams[flag.command] = true;
+
+    return {
+      parsedParams,
+      flagArgumentQuantity: 0
+    }
   }
 
   findFlag(param: string): Option {

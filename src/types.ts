@@ -31,3 +31,12 @@ export interface LogFunction {
 export interface IConfig {
   bindThis?: boolean
 }
+
+export interface ParsedParams { 
+  [key: string]: string|boolean 
+}
+
+export interface ParseResult {
+  parsedParams: ParsedParams
+  flagArgumentQuantity: number
+}
