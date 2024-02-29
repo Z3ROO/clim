@@ -6,13 +6,21 @@ export interface ICommand {
   description: string
   help?: string
   options: Option[]
+  arguments: Argument[]
   subCommands?: ICommand[]
 }
 
 export interface Option {
   flag?: string
   shortFlag?: string
-  type: 'stdin'|'string'|'boolean'
+  type: 'string'|'boolean'
+  description?: string
+  help?: string
+}
+
+export interface Argument {
+  name: string
+  type: 'sdtin'|'argument'
   description?: string
   help?: string
 }

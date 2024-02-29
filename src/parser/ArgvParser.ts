@@ -8,6 +8,7 @@ class ArgvParser {
   constructor(command: ICommand, rawParameters: string[]) {
     this.command = command;
     this.rawParameters = rawParameters;
+    let argumentsAvailable = Array.from(this.command.arguments);
 
 
     for (let i = 0; i < this.rawParameters.length; i++) {
@@ -24,8 +25,9 @@ class ArgvParser {
         Object.assign(this.params, parsedParams)
         i += flagArgumentQuantity;
       }
-      else if (!this.params['stdin']) {
-        this.params['stdin'] = parameter;
+      else if (argumentsAvailable.length > 0) {
+        const { name } = argumentsAvailable.shift();
+        this.params[name] = parameter;
       }
       else {
         throw new Error(`Unexpected Error on parameter "${parameter}". Might not be a valid option.`);
