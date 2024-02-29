@@ -13,6 +13,16 @@ export default class CliMaker {
   constructor(command: ICommand, config?: IConfig) {
     this.command = command;
 
+    this.command.options = [
+      {
+        flag: 'help',
+        shortFlag: 'h',
+        type: 'boolean',
+        description: 'If provided outputs de help content of current command.'
+      },
+      ...this.command.options
+    ];
+    
     this.setCustomLogs();
     this.liftSubCommands();
     this.parseParameters();

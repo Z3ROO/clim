@@ -9,15 +9,6 @@ class ArgvParser {
     this.command = command;
     this.rawParameters = rawParameters;
 
-    this.command.options = [
-      {
-        flag: 'help',
-        shortFlag: 'h',
-        type: 'boolean',
-        description: 'If provided outputs de help content of current command.'
-      },
-      ...this.command.options
-    ];
 
     for (let i = 0; i < this.rawParameters.length; i++) {
       const parameter = this.rawParameters[i];
