@@ -5,14 +5,16 @@ export interface ICommand {
   action: (options:any) => void
   description: string
   help?: string
-  flags: {
-    command?: string
-    alias?: string
-    type: 'stdin'|'string'|'boolean'
-    description?: string
-    help?: string
-  }[]
+  flags: Option[]
   subCommands?: ICommand[]
+}
+
+export interface Option {
+  command?: string
+  alias?: string
+  type: 'stdin'|'string'|'boolean'
+  description?: string
+  help?: string
 }
 
 export interface Params {
