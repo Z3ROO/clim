@@ -1,4 +1,4 @@
-import { ICommand, Params } from "../types";
+import { ICommand, Option, Params } from "../types";
 
 class ArgvParser {
   command: ICommand;
@@ -41,8 +41,6 @@ class ArgvParser {
   isValidAlias = (parameter: string) => parameter.match(/^-[^-]+$/);
 
   parseAlias(parameter: string, nextParemeter: string): number {
-    const flags = this.command.flags;
-
     //Remove dash character
     parameter = parameter.substring(1);
 
@@ -54,15 +52,7 @@ class ArgvParser {
 
     params.forEach(param => {
       //Search for an existing flag
-      const flag = flags.find(flag => param === flag.alias);
-
-      //Flag not found
-      if (flag == null)
-        throw new Error(`No option found for parameter "${param}".`);
-
-      //Flag set twice
-      if (this.params[flag.command])
-        throw new Error(`Option "--${flag.command}" is being set twice on parameter "-${param}".`);
+      const flag = this.findFlag(param);
 
       //If expect argument
       if (flag.type === 'string') {
@@ -91,15 +81,7 @@ class ArgvParser {
     parameter = parameter.substring(2);
 
     //Search for existing flag
-    const flag = this.command.flags.find(flag => parameter === flag.command);
-
-    //Flag not found
-    if (flag == null)
-      throw new Error(`No option found for parameter "${parameter}".`);
-
-    //Flag set twice
-    if (this.params[flag.command])
-      throw new Error(`Option "--${flag.command}" is being set twice by param: "--${parameter}".`);
+    const flag = this.findFlag(parameter);
     
     //Flag with argument
     if (flag.type === 'string') {
@@ -113,6 +95,22 @@ class ArgvParser {
       this.params[flag.command] = true;
     
     return 0;
+  }
+
+  findFlag(param: string): Option {
+    const flags = this.command.flags;
+
+    const flag = flags.find(flag => param === flag.alias);
+
+    //Flag not found
+    if (flag == null)
+      throw new Error(`No option found for parameter "${param}".`);
+
+    //Flag set twice
+    if (this.params[flag.command])
+      throw new Error(`Option "--${flag.command}" is being set twice on parameter "-${param}".`);
+
+    return flag;
   }
 }
 
