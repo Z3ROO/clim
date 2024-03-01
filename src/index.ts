@@ -43,9 +43,9 @@ export default class CliMaker {
 
     //Binds command function with class constructor by default
     if (config?.bindThis !== false)
-      command.action.bind(this)(this.params);
+      this.command.action.bind(this)(this.params);
     else
-      command.action(this.params);
+      this.command.action(this.params);
   }
 
   private liftSubCommands(): void {

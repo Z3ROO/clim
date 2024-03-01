@@ -2,7 +2,7 @@ import CliMaker, { ICommand } from './dist/index.js';
 
 const command2: ICommand = {
   name: 'send',
-  action: toolMethod,
+  action: toolMethod2,
   description: '',
   help: 'Messagem de help',
   arguments: [],
@@ -92,5 +92,10 @@ function toolMethod(options: any) {
   if (directory == null) 
     this.log.err("Destination directory must be specified!");
 }
+
+function toolMethod2(options: any) {
+  console.log("deu bom");
+}
+
 
 const tool = new CliMaker(command)
